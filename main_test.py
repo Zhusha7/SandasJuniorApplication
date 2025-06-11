@@ -1,16 +1,18 @@
 import pytest
 from main import *
 
+
 def test_book_initialization():
     book = Book("Sample Title", "Sample Author", "2025-01-01")
     assert book.title == "Sample Title"
     assert book.author == "Sample Author"
     assert book.publish_date == "2025-01-01"
+    assert book.available == True
 
 
 def test_book_string_representation():
     book = Book("Sample Title", "Sample Author", "2025-01-01")
-    assert str(book) == "Sample Title created by Sample Author at 2025-01-01"
+    assert str(book) == "Sample Title created by Sample Author at 2025-01-01 is available"
 
 
 def test_book_equality():
@@ -50,6 +52,24 @@ def test_search_book_non_existing():
     assert search_result.books == []
 
 
+def test_borrow_book():
+    lib = Library()
+    lib.add_book("Test Book", "Test Author", "2025")
+    assert lib.borrow_book(0) == True
+    assert lib.books[0].available == False
+    assert lib.borrow_book(0) == False
+
+
+def test_return_book():
+    lib = Library()
+
+    lib.add_book("Test Book", "Test Author", "2025")
+    lib.borrow_book(0)
+    assert lib.return_book(0) == True
+    assert lib.books[0].available == True
+    assert lib.return_book(0) == False
+
+
 def test_library_representation_empty():
     lib = Library(books=[])
     assert repr(lib) == "Empty"
@@ -59,7 +79,8 @@ def test_library_representation_with_books():
     book1 = Book("First Title", "First Author", 1234)
     book2 = Book("Second Title", "Second Author", 5678)
     lib = Library(books=[book1, book2])
-    expected_repr = "1. First Title created by First Author at 1234\n2. Second Title created by Second Author at 5678"
+    expected_repr = ("1. First Title created by First Author at 1234 is available\n"
+                     "2. Second Title created by Second Author at 5678 is available")
     assert repr(lib) == expected_repr
 
 

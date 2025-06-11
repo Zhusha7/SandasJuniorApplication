@@ -3,12 +3,13 @@ class Book:
         self.title = title
         self.author = author
         self.publish_date = publish_date
+        self.available = True
 
     def __str__(self):
-        return f"{self.title} created by {self.author} at {self.publish_date}"
+        return f"{self.title} created by {self.author} at {self.publish_date} is {'available' if self.available else 'taken'}"
 
     def __repr__(self):
-        return f"{self.title} {self.author} {self.publish_date}"
+        return f"{self.title} {self.author} {self.publish_date} {'available' if self.available else 'taken'}"
 
     def __eq__(self, other):
         return repr(self) == repr(other)
@@ -38,6 +39,20 @@ class Library:
                 result.append(book)
         return Library(result)
 
+    def borrow_book(self, index):
+        if 0 <= index < len(self.books):
+            if self.books[index].available:
+                self.books[index].available = False
+                return True
+        return False
+
+    def return_book(self, index):
+        if 0 <= index < len(self.books):
+            if not self.books[index].available:
+                self.books[index].available = True
+                return True
+        return False
+
     def __repr__(self):
         if not self.books:
             return "Empty"
@@ -46,15 +61,17 @@ class Library:
             result += f"{index + 1}. {self.books[index]}\n"
         return result.strip()
 
+
 class Menu:
     def __init__(self):
         self.menu_options = {
             1: "Add book",
             2: "Search books",
             3: "Display all books",
-            4: "Exit"
+            4: "Borrow book",
+            5: "Return book",
+            6: "Exit"
         }
-
 
     def display_menu(self):
         print("\nLibrary Menu")
@@ -62,12 +79,11 @@ class Menu:
         for key, value in self.menu_options.items():
             print(f"{key}. {value}")
 
-
     def handle_menu_choice(self, lib):
         while True:
             self.display_menu()
             try:
-                choice = int(input("\nEnter your choice (1-4): "))
+                choice = int(input("\nEnter your choice (1-6): "))
                 if choice == 1:
                     title = input("Enter book title: ")
                     author = input("Enter book author: ")
@@ -83,10 +99,26 @@ class Menu:
                     print("\nLibrary Contents:")
                     print(lib)
                 elif choice == 4:
+                    print("\nLibrary Contents:")
+                    print(lib)
+                    book_index = int(input("Enter book number to borrow: ")) - 1
+                    if lib.borrow_book(book_index):
+                        print("Book borrowed successfully!")
+                    else:
+                        print("Book cannot be borrowed!")
+                elif choice == 5:
+                    print("\nLibrary Contents:")
+                    print(lib)
+                    book_index = int(input("Enter book number to return: ")) - 1
+                    if lib.return_book(book_index):
+                        print("Book returned successfully!")
+                    else:
+                        print("Book cannot be returned!")
+                elif choice == 6:
                     print("Goodbye!")
                     return
                 else:
-                    print("Invalid choice. Please select 1-4.")
+                    print("Invalid choice. Please select 1-6.")
             except ValueError:
                 print("Invalid input. Please enter a number.")
             except TypeError as e:
