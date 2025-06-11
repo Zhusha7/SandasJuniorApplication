@@ -63,7 +63,7 @@ class Menu:
             print(f"{key}. {value}")
 
 
-    def handle_menu_choice(self, library):
+    def handle_menu_choice(self, lib):
         while True:
             self.display_menu()
             try:
@@ -72,16 +72,16 @@ class Menu:
                     title = input("Enter book title: ")
                     author = input("Enter book author: ")
                     publish_date = input("Enter publish date: ")
-                    library.add_book(title, author, publish_date)
+                    lib.add_book(title, author, publish_date)
                     print("Book added successfully!")
                 elif choice == 2:
                     search_term = input("Enter search term: ")
-                    result = library.search_book(search_term)
+                    result = lib.search_book(search_term)
                     print("\nSearch Results:")
                     print(result)
                 elif choice == 3:
                     print("\nLibrary Contents:")
-                    print(library)
+                    print(lib)
                 elif choice == 4:
                     print("Goodbye!")
                     return

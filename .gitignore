@@ -1,7 +1,4 @@
 *.iml
 .venv/
-/.idea/.gitignore
-/.idea/.name
-/.idea/misc.xml
-/.idea/modules.xml
-/.idea/vcs.xml
+venv/
+.idea/
