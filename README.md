@@ -27,11 +27,4 @@ Run the application:
 Run unit tests:
 `pytest`
 
-The application provides a menu with options:
-
-```
-1. Add book
-2. Search books
-3. Display all books
-4. Exit
-```
+Follow on-screen instructions

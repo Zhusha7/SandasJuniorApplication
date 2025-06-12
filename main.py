@@ -9,7 +9,7 @@ class Book:
         return f"{self.title} created by {self.author} at {self.publish_date} is {'available' if self.available else 'taken'}"
 
     def __repr__(self):
-        return f"{self.title} {self.author} {self.publish_date} {'available' if self.available else 'taken'}"
+        return f"{self.title} {self.author} {self.publish_date}"
 
     def __eq__(self, other):
         return repr(self) == repr(other)
@@ -33,23 +33,28 @@ class Library:
             raise TypeError("Book has to be of Book class or provide title, author, publish_date")
 
     def search_book(self, search_string):
+        seen = set()
         result = []
         for book in self.books:
-            if search_string.lower() in repr(book).lower():
+            key = (book.title.lower(), book.author.lower(), book.publish_date)
+            if (search_string.lower() in book.title.lower() or
+                search_string.lower() in book.author.lower()) and key not in seen:
                 result.append(book)
+                seen.add(key)
+        result.sort(key=lambda x: x.publish_date, reverse=True)
         return Library(result)
 
-    def borrow_book(self, index):
-        if 0 <= index < len(self.books):
-            if self.books[index].available:
-                self.books[index].available = False
+    def borrow_book(self, book):
+        for lib_book in self.books:
+            if lib_book == book and lib_book.available:
+                lib_book.available = False
                 return True
         return False
 
-    def return_book(self, index):
-        if 0 <= index < len(self.books):
-            if not self.books[index].available:
-                self.books[index].available = True
+    def return_book(self, book):
+        for lib_book in self.books:
+            if lib_book == book and not lib_book.available:
+                lib_book.available = True
                 return True
         return False
 
@@ -102,18 +107,24 @@ class Menu:
                     print("\nLibrary Contents:")
                     print(lib)
                     book_index = int(input("Enter book number to borrow: ")) - 1
-                    if lib.borrow_book(book_index):
-                        print("Book borrowed successfully!")
+                    if 0 <= book_index < len(lib.books):
+                        if lib.borrow_book(lib.books[book_index]):
+                            print("Book borrowed successfully!")
+                        else:
+                            print("Book cannot be borrowed!")
                     else:
-                        print("Book cannot be borrowed!")
+                        print("Invalid book number!")
                 elif choice == 5:
                     print("\nLibrary Contents:")
                     print(lib)
                     book_index = int(input("Enter book number to return: ")) - 1
-                    if lib.return_book(book_index):
-                        print("Book returned successfully!")
+                    if 0 <= book_index < len(lib.books):
+                        if lib.return_book(lib.books[book_index]):
+                            print("Book returned successfully!")
+                        else:
+                            print("Book cannot be returned!")
                     else:
-                        print("Book cannot be returned!")
+                        print("Invalid book number!")
                 elif choice == 6:
                     print("Goodbye!")
                     return
